@@ -68,7 +68,7 @@
 <section class="hero teaser" id="teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <img src="./static/images/teaser.png" width="2400" height="943" alt="Pipeline diagram placing the four methods side by side. At the left, a DEM tile is patchified into a grid of patches. Two routes turn those patches into per-tile parameters: a meta-learner block whose per-tile latent code is optimized at test time (Functa, shift modulation), and a hypernetwork encoder and decoder around a row of bottleneck tokens (HUVR+SIREN, amplitude-plus-shift modulation; HUVR, Hadamard modulation; TransINR, weight prediction). Colored arrows route each method into one of two coordinate decoders that map an x and y coordinate to an elevation z: a SIREN decoder for Functa and HUVR+SIREN, a ReLU-MLP decoder for HUVR and TransINR. At the right, patch-wise paths pass through a patch-stitching or an upsample-and-pixelshuffle block before the reconstructed tile; full-domain paths reach it directly. A legend along the bottom keys the token colors, the test-time-optimized and shared-weight boxes, and the full-domain versus patch reconstruction arrows.">
+      <img decoding="async" src="./static/images/teaser.png" width="3062" height="1204" alt="Pipeline diagram placing the four methods side by side. At the left, a DEM tile is patchified into a grid of patches. Two routes turn those patches into per-tile parameters: a meta-learner block whose per-tile latent code is optimized at test time (Functa, shift modulation), and a hypernetwork encoder and decoder around a row of bottleneck tokens (HUVR+SIREN, amplitude-plus-shift modulation; HUVR, Hadamard modulation; TransINR, weight prediction). Colored arrows route each method into one of two coordinate decoders that map an x and y coordinate to an elevation z: a SIREN decoder for Functa and HUVR+SIREN, a ReLU-MLP decoder for HUVR and TransINR. At the right, patch-wise paths pass through a patch-stitching or an upsample-and-pixelshuffle block before the reconstructed tile; full-domain paths reach it directly. A legend along the bottom keys the token colors, the test-time-optimized and shared-weight boxes, and the full-domain versus patch reconstruction arrows.">
       <h2 class="subtitle has-text-centered">
         Amortized neural representations encode each terrain tile as a compact
         per-tile token that a shared coordinate decoder turns back into a
@@ -278,7 +278,7 @@
     <div class="columns is-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Derivative fidelity</h2>
-        <img src="./static/images/gradient_fidelity.png" width="1620" height="624" alt="Three terrain tiles (flat, hilly, mountainous), each shown as elevation, gradient magnitude, and Laplacian, for ground truth, HUVR, and HUVR+SIREN.">
+        <img class="lqip-grad" loading="lazy" decoding="async" src="./static/images/gradient_fidelity.png" width="2700" height="1039" alt="Three terrain tiles (flat, hilly, mountainous), each shown as elevation, gradient magnitude, and Laplacian, for ground truth, HUVR, and HUVR+SIREN.">
         <div class="content has-text-justified">
           <p class="is-size-7">
             Reconstruction of three tiles at the 10%, 50%, and 90% quantiles of
@@ -312,7 +312,7 @@
     <div class="columns is-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Storage and decode cost</h2>
-        <img class="figure-narrow" src="./static/images/rate_distortion.png" width="1648" height="1141" alt="Rate-distortion scatter plot of PSNR against bits per pixel, showing the HUVR+SIREN post-training-quantization frontier dominating full-precision HUVR down to int8.">
+        <img loading="lazy" decoding="async" class="lqip-rd figure-narrow" src="./static/images/rate_distortion.png" width="1648" height="1141" alt="Rate-distortion scatter plot of PSNR against bits per pixel, showing the HUVR+SIREN post-training-quantization frontier dominating full-precision HUVR down to int8.">
         <div class="content has-text-justified">
           <p class="is-size-7">
             Rate&ndash;distortion frontier on the test split under
@@ -345,7 +345,7 @@
     <div class="columns is-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Diagnosis of the amortization gap</h2>
-        <img class="figure-narrow" src="./static/images/amortization_gap.png" width="1532" height="1197" alt="Line plot of HUVR+SIREN PSNR at three progressively more flexible per-tile configurations, with horizontal baselines for the other reproduced methods.">
+        <img loading="lazy" decoding="async" class="lqip-gap figure-narrow" src="./static/images/amortization_gap.png" width="1532" height="1197" alt="Line plot of HUVR+SIREN PSNR at three progressively more flexible per-tile configurations, with horizontal baselines for the other reproduced methods.">
         <div class="content has-text-justified">
           <p class="is-size-7">
             Decomposing the amortization gap of HUVR+SIREN. PSNR as per-tile
