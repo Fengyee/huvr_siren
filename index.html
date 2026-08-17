@@ -1,18 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="description" content="SASNet: Spatially-Adaptive Sinusoidal Networks for INRs. An implicit neural representation that introduces spatial localization into SIRENs through a frozen frequency embedding layer and learned spatially-adaptive masks.">
   <meta property="og:title" content="SASNet: Spatially-Adaptive Sinusoidal Networks for INRs"/>
   <meta property="og:description" content="SASNet introduces spatial localization into SIRENs through a frozen frequency embedding layer and learned spatially-adaptive masks."/>
   <meta property="og:url" content="https://fengyee.github.io/SASNet_inr/"/>
-  <meta property="og:image" content="static/images/og_banner.png" />
-  <meta property="og:image:width" content="1200"/>
-  <meta property="og:image:height" content="630"/>
-
   <meta name="twitter:title" content="SASNet: Spatially-Adaptive Sinusoidal Networks for INRs">
   <meta name="twitter:description" content="A spatially-adaptive sinusoidal INR: stable training, sharper edges, cleaner backgrounds across image, volume, and SDF tasks.">
-  <meta name="twitter:image" content="static/images/og_banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="keywords" content="implicit neural representation, INR, SIREN, hash grid, SDF, neural fields, spatially adaptive, frequency localization">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,7 +28,6 @@
     };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="static/js/fontawesome.all.min.js"></script>
 </head>
 <body>
@@ -57,18 +51,13 @@
             <span class="author-block"><sup>1</sup>University of Maryland, College Park &nbsp;&nbsp; <sup>2</sup>Institute for Pure and Applied Mathematics (IMPA)</span>
           </div>
           <div class="is-size-5 publication-authors" style="margin-top:0.4rem;">
-            <span class="author-block"><strong>CVPR 2026</strong></span>
+            <span class="author-block"><strong>ACM SIGSPATIAL 2026</strong></span>
           </div>
 
           <div class="publication-links" style="margin-top:1rem;">
             <span class="link-block">
-              <a href="https://arxiv.org/abs/2503.09750" target="_blank" class="external-link button is-normal is-rounded is-dark">
+              <a href="https://arxiv.org/abs/2606.00404" target="_blank" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span>
-              </a>
-            </span>
-            <span class="link-block">
-              <a href="static/cvpr2026_sasnet_poster.pdf" target="_blank" class="external-link button is-normal is-rounded is-dark">
-                <span class="icon"><i class="fas fa-image"></i></span><span>Poster</span>
               </a>
             </span>
             <span class="link-block">
@@ -81,14 +70,6 @@
                 <span class="icon"><i class="fas fa-quote-right"></i></span><span>BibTeX</span>
               </a>
             </span>
-          </div>
-
-          <div class="tldr-pills">
-            <span class="tag">Image fitting</span>
-            <span class="tag">Volumetric data</span>
-            <span class="tag">SDF reconstruction</span>
-            <span class="tag">Stable training</span>
-            <span class="tag">Frequency localization</span>
           </div>
         </div>
       </div>
@@ -111,9 +92,7 @@
         regions as <em>frequency leakage</em>, the central failure mode SASNet addresses.
         By learning where each frequency band should be active, SASNet produces sharper
         edges while keeping smooth regions clean on
-        <a href="#results-image">2D super-resolution</a> (top),
-        <a href="#results-volume">volumetric fitting</a> (middle), and
-        <a href="#results-sdf">SDF reconstruction</a> (bottom).
+        <a href="#results-image">2D super-resolution</a>.
       </p>
     </div>
   </div>
@@ -156,9 +135,6 @@
   <div class="container is-max-desktop">
     <p class="section-eyebrow has-text-centered">Method</p>
     <h2 class="title is-3 section-title has-text-centered">SASNet architecture</h2>
-    <div class="figure-frame" style="max-width:1000px;">
-      <img src="static/images/method_overview.png" alt="SASNet overview diagram: frequency embedding layer combined with hash-grid-driven spatial masks modulating sinusoidal neurons.">
-    </div>
     <p class="figure-caption">
       A frozen <strong>frequency embedding layer</strong> fixes the spectral support of the network,
       following Novello et&nbsp;al.&nbsp;(2024). In parallel, a multi-scale <strong>hash-grid MLP</strong>
@@ -287,38 +263,6 @@
     </div>
     <p class="figure-caption">
       <strong>Scalability on Kodak.</strong> SASNet shows good scaling behavior, leading across the practical parameter range.
-    </p>
-  </div>
-</section>
-
-<!-- =========================== Result 2: Volumetric =========================== -->
-<section class="section" id="results-volume">
-  <div class="container is-max-desktop">
-    <p class="section-eyebrow has-text-centered">Results &middot; 3D volumes</p>
-    <h2 class="title is-3 section-title has-text-centered">Volumetric data on ScalarFlow</h2>
-
-    <div class="figure-frame" style="max-width:680px; margin-bottom:1.5rem;">
-      <table class="table is-striped is-hoverable is-fullwidth result-table">
-        <thead>
-          <tr><th>Method</th><th class="num">PSNR ↑</th><th class="num">SSIM ↑</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>PEMLP</td><td class="num">40.42</td><td class="num">0.9434</td></tr>
-          <tr><td>Gauss</td><td class="num">47.11</td><td class="num">0.9920</td></tr>
-          <tr><td>SIREN</td><td class="num">47.67</td><td class="num">0.9948</td></tr>
-          <tr><td>FINER</td><td class="num">49.77</td><td class="num">0.9959</td></tr>
-          <tr><td>WIRE</td><td class="num runner">53.06</td><td class="num runner">0.9963</td></tr>
-          <tr class="ours"><td>SASNet (Ours)</td><td class="num best">55.92</td><td class="num best">0.9973</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="figure-frame">
-      <img src="static/images/volume_comparison.png" alt="Volumetric reconstruction comparison.">
-    </div>
-    <p class="figure-caption">
-      SASNet recovers thin filaments and turbulent detail while keeping a clean empty background, whereas global methods
-      (SIREN, FINER) leak high-frequency noise into empty regions and local methods (WIRE) introduce artifacts in smooth areas.
     </p>
   </div>
 </section>
