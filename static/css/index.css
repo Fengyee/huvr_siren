@@ -110,6 +110,23 @@ body {
 .publication-body img {
 }
 
+/* Narrower plots: the rate-distortion and amortization-gap figures are
+   single-column plots and read better below full width, matching the
+   paper's own 0.82\linewidth treatment of them. Full width on phones,
+   where 75% would be too small to read. */
+.figure-narrow {
+  display: block;
+  margin: 0 auto;
+  width: 75%;
+  height: auto;
+}
+
+@media screen and (max-width: 768px) {
+  .figure-narrow {
+    width: 100%;
+  }
+}
+
 .results-carousel {
   overflow: hidden;
 }
