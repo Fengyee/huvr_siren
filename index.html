@@ -18,17 +18,11 @@
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
 
   <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="static/css/index.css">
 
-  <script>
-    window.MathJax = {
-      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
-      svg: { fontCache: 'global' }
-    };
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" id="MathJax-script" async></script>
+  <!-- Renders the <i class="fa*"> elements as inline SVG; it injects its
+       own styles, so no FontAwesome stylesheet or webfonts are needed. -->
   <script defer src="static/js/fontawesome.all.min.js"></script>
 </head>
 <body>
@@ -193,7 +187,8 @@
             data. We replace it with a SIREN, whose sinusoidal activations are
             infinitely differentiable, conditioned on the patch token through
             ModulatedSIREN's per-layer amplitude modulation, which we extend
-            with an additive phase shift inside the sinusoid. The decoder is a 4-layer SIREN of width 256 with
+            with an additive phase shift inside the sinusoid. The decoder is a
+            4-layer SIREN of width 256 with
             &omega;<sub>0</sub>&nbsp;=&nbsp;10, evaluated directly at each pixel
             coordinate, which removes HUVR's convolutional upsampler. The
             modification is deliberately restricted: the encoder, hypernetwork
@@ -363,9 +358,9 @@
             decoder and SIREN base weights specialize per tile (which destroys
             amortization, so it is a structural ceiling rather than an inference
             recipe) reaches 58.95&nbsp;dB, more than 7&nbsp;dB above the
-            amortized 51.69&nbsp;dB. A PCA of all patch tokens agrees: five of the 32
-            dimensions carry 95% of the variance. Within the tested dataset
-            scale and configuration, the gap lives in the <b>shared
+            amortized 51.69&nbsp;dB. A PCA of all patch tokens agrees: five of
+            the 32 dimensions carry 95% of the variance. Within the tested
+            dataset scale and configuration, the gap lives in the <b>shared
             post-bottleneck pipeline</b>, not in the per-tile token &mdash;
             narrowing it needs a more expressive shared pipeline, not a wider
             token.
