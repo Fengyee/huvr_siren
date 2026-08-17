@@ -220,6 +220,183 @@
   </div>
 </section>
 
+<!-- =========================== Results =========================== -->
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Cross-method benchmark</h2>
+        <div class="table-container">
+        <table class="table is-fullwidth is-narrow">
+          <thead>
+            <tr>
+              <th>Method</th>
+              <th class="has-text-right">PSNR &uarr;</th>
+              <th class="has-text-right">RMSE<sub>z</sub> &darr;</th>
+              <th class="has-text-right">&nabla;f &darr;</th>
+              <th class="has-text-right">&nabla;&sup2;f &darr;</th>
+              <th class="has-text-right">#floats</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>TransINR</td><td class="has-text-right">41.56</td><td class="has-text-right">0.222</td><td class="has-text-right">0.095</td><td class="has-text-right">0.103</td><td class="has-text-right">197,376</td></tr>
+            <tr><td>Functa</td><td class="has-text-right">35.00</td><td class="has-text-right">0.498</td><td class="has-text-right">0.115</td><td class="has-text-right">0.095</td><td class="has-text-right">512</td></tr>
+            <tr><td>HUVR</td><td class="has-text-right">48.86</td><td class="has-text-right">0.092</td><td class="has-text-right">0.068</td><td class="has-text-right">0.091</td><td class="has-text-right">8,224</td></tr>
+            <tr><td><b>HUVR+SIREN</b></td><td class="has-text-right"><b>51.69</b></td><td class="has-text-right"><b>0.066</b></td><td class="has-text-right"><b>0.053</b></td><td class="has-text-right"><b>0.076</b></td><td class="has-text-right">8,224</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="content has-text-justified">
+          <p class="is-size-7">
+            Test split (n&nbsp;=&nbsp;432). PSNR in dB, RMSE<sub>z</sub> in
+            meters; &nabla;f (m/px) and &nabla;&sup2;f (m/px&sup2;) are gradient
+            and Laplacian RMSE against finite-difference references.
+            <em>#floats</em> is the per-tile payload; shared model weights are
+            amortized across the dataset and excluded.
+          </p>
+          <p>
+            Among the three reproduced methods, HUVR achieves the highest
+            height fidelity, the lowest derivative errors, and a per-tile
+            representation an order of magnitude smaller than TransINR's,
+            outperforming the reproduced TransINR and Functa configurations by
+            7.3 and 13.9&nbsp;dB. HUVR+SIREN improves every reported fidelity
+            metric at unchanged per-tile storage: a <b>+2.83&nbsp;dB</b> gain
+            and a 28% height-error reduction at the same 8,224-float payload,
+            with gradient RMSE reduced by 23% and Laplacian RMSE by 17%.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== Derivative fidelity =========================== -->
+<section class="section" id="gradients">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Derivative fidelity</h2>
+        <img src="./static/images/gradient_fidelity.png" alt="Three terrain tiles (flat, hilly, mountainous), each shown as elevation, gradient magnitude, and Laplacian, for ground truth, HUVR, and HUVR+SIREN.">
+        <div class="content has-text-justified">
+          <p class="is-size-7">
+            Reconstruction of three tiles at the 10%, 50%, and 90% quantiles of
+            per-tile elevation standard deviation (<em>flat</em>,
+            <em>hilly</em>, <em>mountainous</em>). Columns within each group
+            show elevation, gradient magnitude, and Laplacian; rows are ground
+            truth, HUVR, and HUVR+SIREN.
+          </p>
+          <p>
+            Derivative fidelity is the axis on which the domain mismatch shows
+            up most clearly. Because SIREN's activations are infinitely
+            differentiable, gradients and Laplacians can be evaluated
+            analytically by automatic differentiation rather than by finite
+            differences of a decoded raster, and the reconstructed derivative
+            fields stay clean where HUVR's piecewise-linear decoder produces
+            visible structure at its activation breakpoints. The improvement
+            also holds for the worst-case tiles, whose maximum gradient and
+            Laplacian errors drop by 20% and 19%.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== Storage cost =========================== -->
+<section class="section" id="rate-distortion">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Storage cost</h2>
+        <img src="./static/images/rate_distortion.png" alt="Rate-distortion scatter plot of PSNR against bits per pixel, showing the HUVR+SIREN post-training-quantization frontier dominating full-precision HUVR down to int8.">
+        <div class="content has-text-justified">
+          <p class="is-size-7">
+            Rate&ndash;distortion frontier on the test split under
+            post-training quantization (PTQ) of the bottleneck token. The solid
+            curve is an estimated Shannon lower bound from per-dimension
+            entropy models; the dashed curve is fixed-width.
+          </p>
+          <p>
+            The per-tile payload tolerates aggressive post-training
+            quantization. Quantizing the bottleneck token to int8 with
+            symmetric per-dimension min&ndash;max scales costs only
+            <b>0.15&nbsp;dB</b> (51.54&nbsp;dB at 1.012&nbsp;BPP fixed-width),
+            so the int8 configuration still reconstructs more faithfully than
+            HUVR at full precision while storing a quarter of the bits. Below
+            int8, reconstruction quality degrades sharply. Removing the
+            upsampler also cuts analytical decoder FLOPs per pixel by 19%,
+            though measured wall-clock per tile is slightly higher than HUVR's
+            (18.11 vs. 15.96&nbsp;ms) because independent per-pixel SIREN
+            evaluation is less hardware-efficient than HUVR's fused upsampler.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== Amortization gap =========================== -->
+<section class="section" id="gap">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Where the gap remains</h2>
+        <img src="./static/images/amortization_gap.png" alt="Line plot of HUVR+SIREN PSNR at three progressively more flexible per-tile configurations, with horizontal baselines for the other reproduced methods.">
+        <div class="content has-text-justified">
+          <p class="is-size-7">
+            Decomposing the amortization gap of HUVR+SIREN. PSNR as per-tile
+            flexibility expands: amortized encoding, the per-instance fitting
+            bound, and the per-tile full-model upper bound. Dashed lines mark
+            the amortized cross-method benchmark.
+          </p>
+          <p>
+            Per-instance fitting reaches higher per-tile quality than amortized
+            inference, and we call the difference the <em>amortization gap</em>.
+            Two diagnostics locate it. Freezing the shared model and continuing
+            to optimize only the bottleneck token per tile reaches
+            53.05&nbsp;dB &mdash; just +1.36&nbsp;dB over amortized inference,
+            so the encoder already produces tokens close to the best 32-d token
+            the shared decoder can use. Additionally letting the hypernetwork
+            decoder and SIREN base weights specialize per tile (which destroys
+            amortization, so it is a structural ceiling rather than an inference
+            recipe) reaches 58.95&nbsp;dB, more than 7&nbsp;dB above the
+            amortized 51.69. A PCA of all patch tokens agrees: five of the 32
+            dimensions carry 95% of the variance. Within the tested dataset
+            scale and configuration, the gap lives in the <b>shared
+            post-bottleneck pipeline</b>, not in the per-tile token &mdash;
+            narrowing it needs a more expressive shared pipeline, not a wider
+            token.
+          </p>
+          <p>
+            <b>What this does not cover.</b> The findings characterize a single
+            geographic source at a single ground sampling distance, and a direct
+            rate&ndash;distortion comparison against production DEM codecs such
+            as LERC and ZFP remains open.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =========================== Ablations =========================== -->
+<section class="section" id="ablations">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-four-fifths">
+        <div class="content has-text-centered">
+          <p>
+            One-at-a-time ablations on encoder size, patch size, bottleneck
+            width, decoder capacity, SIREN base frequency, modulation interface,
+            and training-set size are reported in the
+            <a href="./static/huvr_siren_sigspatial2026.pdf">paper</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- =========================== BibTeX =========================== -->
 <section class="section" id="bibtex">
   <div class="container is-max-desktop content">
