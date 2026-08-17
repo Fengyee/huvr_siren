@@ -227,15 +227,15 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Cross-method benchmark</h2>
         <div class="table-container">
-        <table class="table is-fullwidth is-narrow">
+        <table class="table is-fullwidth is-narrow" aria-describedby="results-table-desc">
           <thead>
             <tr>
-              <th>Method</th>
-              <th class="has-text-right">PSNR &uarr;</th>
-              <th class="has-text-right">RMSE<sub>z</sub> &darr;</th>
-              <th class="has-text-right">&nabla;f &darr;</th>
-              <th class="has-text-right">&nabla;&sup2;f &darr;</th>
-              <th class="has-text-right">#floats</th>
+              <th scope="col">Method</th>
+              <th scope="col" class="has-text-right">PSNR &uarr;</th>
+              <th scope="col" class="has-text-right">RMSE<sub>z</sub> &darr;</th>
+              <th scope="col" class="has-text-right">&nabla;f &darr;</th>
+              <th scope="col" class="has-text-right">&nabla;&sup2;f &darr;</th>
+              <th scope="col" class="has-text-right">#floats</th>
             </tr>
           </thead>
           <tbody>
@@ -247,7 +247,7 @@
         </table>
         </div>
         <div class="content has-text-justified">
-          <p class="is-size-7">
+          <p class="is-size-7" id="results-table-desc">
             Test split (n&nbsp;=&nbsp;432). PSNR in dB, RMSE<sub>z</sub> in
             meters; &nabla;f (m/px) and &nabla;&sup2;f (m/px&sup2;) are gradient
             and Laplacian RMSE against finite-difference references.
@@ -286,15 +286,18 @@
             truth, HUVR, and HUVR+SIREN.
           </p>
           <p>
-            Derivative fidelity is the axis on which the domain mismatch shows
-            up most clearly. Because SIREN's activations are infinitely
-            differentiable, gradients and Laplacians can be evaluated
-            analytically by automatic differentiation rather than by finite
-            differences of a decoded raster, and the reconstructed derivative
-            fields stay clean where HUVR's piecewise-linear decoder produces
-            visible structure at its activation breakpoints. The improvement
-            also holds for the worst-case tiles, whose maximum gradient and
-            Laplacian errors drop by 20% and 19%.
+            Terrain is interpreted through its derivatives: downstream
+            geospatial analyses, from slope and curvature estimation to
+            hydrological modeling, rely on continuous gradients and Laplacians
+            rather than on elevation values alone. SIREN's activations are
+            infinitely differentiable, so for the SIREN-based decoders these
+            derivatives are computed analytically by automatic differentiation
+            rather than by finite differences of a decoded raster, whereas
+            HUVR's ReLU coordinate decoder is piecewise-linear, with
+            derivatives that are discontinuous at its activation breakpoints.
+            The figure above illustrates the effect qualitatively. The
+            improvement also holds for the worst-case tiles, whose maximum
+            gradient and Laplacian errors drop by 20% and 19%.
           </p>
         </div>
       </div>
@@ -360,7 +363,7 @@
             decoder and SIREN base weights specialize per tile (which destroys
             amortization, so it is a structural ceiling rather than an inference
             recipe) reaches 58.95&nbsp;dB, more than 7&nbsp;dB above the
-            amortized 51.69. A PCA of all patch tokens agrees: five of the 32
+            amortized 51.69&nbsp;dB. A PCA of all patch tokens agrees: five of the 32
             dimensions carry 95% of the variance. Within the tested dataset
             scale and configuration, the gap lives in the <b>shared
             post-bottleneck pipeline</b>, not in the per-tile token &mdash;
@@ -386,9 +389,9 @@
       <div class="column is-four-fifths">
         <div class="content has-text-centered">
           <p>
-            One-at-a-time ablations on encoder size, patch size, bottleneck
-            width, decoder capacity, SIREN base frequency, modulation interface,
-            and training-set size are reported in the
+            One-at-a-time ablations on patch size, bottleneck width, SIREN base
+            frequency, modulation interface, and training-set size are reported
+            in the
             <a href="./static/huvr_siren_sigspatial2026.pdf">paper</a>.
           </p>
         </div>
