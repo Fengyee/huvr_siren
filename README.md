@@ -4,7 +4,7 @@
 
 ACM SIGSPATIAL 2026
 
-[**Project page**](https://fengyee.github.io/huvr_siren/) · [**arXiv**](https://arxiv.org/abs/2606.00404) · [**Paper (PDF)**](https://fengyee.github.io/huvr_siren/static/huvr_siren_sigspatial2026.pdf)
+[**Project page**](https://fengyee.github.io/huvr_siren/) · [**Paper (arXiv)**](https://arxiv.org/abs/2606.00404)
 
 ## TL;DR
 
@@ -44,7 +44,6 @@ Three different terms apply to the contents of this repository:
   [Nerfies project page](https://github.com/nerfies/nerfies.github.io),
   released under
   [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
-- **Paper PDF and figures** (`static/huvr_siren_sigspatial2026.pdf`,
-  `static/images/*`): © 2026 the authors; publication rights licensed to ACM.
-  Not covered by the MIT license above — reuse is governed by the ACM
-  copyright notice on the first page of the paper.
+- **Paper figures** (`static/images/*`): © 2026 the authors; publication
+  rights licensed to ACM. Not covered by the MIT license above — reuse is
+  governed by the ACM copyright notice in the published paper.
