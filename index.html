@@ -91,8 +91,7 @@
         We refer to this undesired activation of high-frequency components in low-frequency
         regions as <em>frequency leakage</em>, the central failure mode SASNet addresses.
         By learning where each frequency band should be active, SASNet produces sharper
-        edges while keeping smooth regions clean on
-        <a href="#results-image">2D super-resolution</a>.
+        edges while keeping smooth regions clean.
       </p>
     </div>
   </div>
@@ -203,67 +202,6 @@
         evenly.
       </p>
     </div>
-  </div>
-</section>
-
-<!-- =========================== Result 1: Image fitting =========================== -->
-<section class="section hero is-light" id="results-image">
-  <div class="container is-max-desktop">
-    <p class="section-eyebrow has-text-centered">Results &middot; 2D images</p>
-    <h2 class="title is-3 section-title has-text-centered">Image fitting on DIV2K</h2>
-
-    <div class="figure-frame" style="max-width:760px; margin-bottom:1.5rem;">
-      <table class="table is-striped is-hoverable is-fullwidth result-table">
-        <thead>
-          <tr>
-            <th>Method</th>
-            <th class="num">PSNR ↑</th>
-            <th class="num">SSIM ↑</th>
-            <th class="num">PSNR<sub>edge</sub> ↑</th>
-            <th class="num">Noisiness ↓</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr><td>SIREN</td><td class="num">34.64</td><td class="num">0.959</td><td class="num">31.37</td><td class="num runner">2.525</td></tr>
-          <tr><td>FFN</td><td class="num">31.92</td><td class="num">0.910</td><td class="num">30.20</td><td class="num">9.873</td></tr>
-          <tr><td>SAPE</td><td class="num">32.57</td><td class="num">0.932</td><td class="num">30.31</td><td class="num">3.128</td></tr>
-          <tr><td>WIRE</td><td class="num">28.76</td><td class="num">0.831</td><td class="num">25.73</td><td class="num">10.324</td></tr>
-          <tr><td>FINER</td><td class="num runner">37.52</td><td class="num">0.967</td><td class="num runner">34.02</td><td class="num">4.617</td></tr>
-          <tr><td>GaussianImage</td><td class="num">37.38</td><td class="num runner">0.973</td><td class="num">33.25</td><td class="num">&ndash;</td></tr>
-          <tr><td>NeuRBF</td><td class="num">36.33</td><td class="num">0.959</td><td class="num">33.92</td><td class="num">6.975</td></tr>
-          <tr class="ours"><td>SASNet (Ours)</td><td class="num best">39.82</td><td class="num best">0.979</td><td class="num best">36.81</td><td class="num best">2.105</td></tr>
-        </tbody>
-      </table>
-      <p class="figure-caption">
-        <span style="background:#fde0e0; padding:0 0.4em; border-radius:3px;">Best</span> /
-        <span style="background:#ffe9cf; padding:0 0.4em; border-radius:3px;">runner-up</span>.
-        SASNet wins on all four metrics, with the largest gap on <em>noisiness</em>: direct evidence that the masks suppress frequency leakage.
-      </p>
-    </div>
-
-    <div class="figure-frame">
-      <img src="static/images/toy_comparison.png" alt="Reconstruction error maps and learned masks on a toy image.">
-    </div>
-    <p class="figure-caption">
-      <strong>Error maps and learned masks on a toy image.</strong> Most baselines exhibit ringing or fail to capture the
-      central high-frequency structure. SASNet learns <em>well-localized, multi-frequency</em> masks that activate only
-      where they are needed, in stark contrast to SAPE's spatially inconsistent masks.
-    </p>
-
-    <div class="figure-frame" style="margin-top:2rem;">
-      <img src="static/images/quality_superres.png" alt="Pixel-shift and ×16 super-resolution comparison.">
-    </div>
-    <p class="figure-caption">
-      <strong>Pixel shift and ×16 super-resolution.</strong> SASNet is the only method that simultaneously preserves
-      sharp texture (yellow boxes) and stays clean in smooth regions (green boxes).
-    </p>
-
-    <div class="figure-frame" style="margin-top:2rem; max-width:780px;">
-      <img src="static/images/scalability.png" alt="PSNR vs. parameter count on Kodak.">
-    </div>
-    <p class="figure-caption">
-      <strong>Scalability on Kodak.</strong> SASNet shows good scaling behavior, leading across the practical parameter range.
-    </p>
   </div>
 </section>
 
