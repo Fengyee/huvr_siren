@@ -123,19 +123,25 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Contributions</h2>
         <div class="content has-text-justified">
-          <p>
-            We benchmark three representative amortized-INR methods (TransINR,
-            Functa, and HUVR) on 1&nbsp;m/pixel bare-earth terrain under a
-            unified protocol, reproducing each from its published
-            implementation. HUVR transfers best of the three, and replacing its
-            piecewise-linear ReLU coordinate decoder with a modulated SIREN
-            raises PSNR by a further +2.83&nbsp;dB (51.69 vs. 48.86&nbsp;dB)
-            and reduces height error by 28%, at an unchanged 8,224-float
-            per-tile payload that in turn tolerates int8 post-training
-            quantization at a cost of 0.15&nbsp;dB. Two per-tile optimization
-            diagnostics then localize the residual amortization gap in the
-            shared post-bottleneck pipeline rather than in the per-tile token.
-          </p>
+          <ul>
+            <li>We benchmark three representative amortized-INR methods
+              (TransINR, Functa, and HUVR) on a high-resolution
+              1&nbsp;m/pixel swisstopo terrain dataset, each reproduced from
+              its published implementation, under a unified protocol covering
+              height fidelity, derivative fidelity, decode cost, and storage
+              under post-training quantization.</li>
+            <li>Motivated by the smoothness of terrain surfaces and the
+              derivative-fidelity requirements of downstream analysis, we
+              introduce <b>HUVR+SIREN</b>, which replaces the ReLU coordinate
+              decoder of the strongest benchmarked method with a SIREN. It
+              raises PSNR by +2.83&nbsp;dB (51.69 vs. 48.86&nbsp;dB) and
+              reduces height error by 28% at an unchanged 8,224-float per-tile
+              payload, which in turn tolerates int8 post-training quantization
+              at a cost of 0.15&nbsp;dB.</li>
+            <li>Two per-tile optimization diagnostics localize the residual
+              amortization gap in the shared post-bottleneck pipeline rather
+              than in the per-tile token.</li>
+          </ul>
         </div>
       </div>
     </div>
@@ -175,8 +181,7 @@
             patches at width 32, plus one global token, giving a per-tile token
             of 8,224 floats); its transformer decoder turns that token into
             per-patch modulations of a shared 3-layer ReLU MLP, whose per-patch
-            outputs
-            are stitched and refined by a Conv+PixelShuffle upsampler.
+            outputs are stitched and refined by a Conv+PixelShuffle upsampler.
           </p>
           <h3 class="title is-5">HUVR+SIREN: a domain-adapted decoder</h3>
           <p>
@@ -409,7 +414,10 @@
             The findings characterize a single geographic source at a single
             ground sampling distance, and a direct rate&ndash;distortion
             comparison against production DEM codecs such as LERC and ZFP
-            remains open.
+            remains open. These results motivate extending the benchmark to
+            additional geographic regions, sampling distances, and codec
+            baselines, and redesigning the shared post-bottleneck pipeline to
+            recover more of the per-tile fitting ceiling.
           </p>
         </div>
       </div>
