@@ -72,9 +72,9 @@
       <h2 class="subtitle has-text-centered">
         Amortized neural representations encode each terrain tile as a compact
         per-tile token that a shared coordinate decoder turns back into a
-        continuous elevation surface. The diagram contrasts the four methods
-        compared here &mdash; TransINR, Functa, HUVR, and HUVR+SIREN &mdash;
-        which differ in how that token is produced and how it modulates the
+        continuous elevation surface. The diagram places the four methods
+        compared here (TransINR, Functa, HUVR, and HUVR+SIREN) side by side.
+        They differ in how that token is produced and how it modulates the
         decoder.
       </h2>
     </div>
@@ -117,27 +117,25 @@
   </div>
 </section>
 
-<!-- =========================== TL;DR =========================== -->
-<section class="section" id="tldr">
+<!-- =========================== Contributions =========================== -->
+<section class="section" id="contributions">
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3 has-text-centered">TL;DR</h2>
-        <div class="content">
-          <ul>
-            <li><b>A controlled benchmark.</b> Three representative amortized
-              INR methods &mdash; TransINR, Functa, and HUVR &mdash; reproduced
-              from their published implementations and evaluated under one
-              protocol on 1&nbsp;m/pixel bare-earth terrain.</li>
-            <li><b>HUVR+SIREN.</b> Swapping HUVR's piecewise-linear ReLU
-              coordinate decoder for a modulated SIREN gains
-              <b>+2.83&nbsp;dB</b> (51.69 vs. 48.86&nbsp;dB) and cuts height
-              error by 28%, at an unchanged 8,224-float per-tile payload.</li>
-            <li><b>Cheap to store.</b> int8 post-training quantization of the
-              per-tile token costs only 0.15&nbsp;dB, so the quantized model
-              still beats full-precision HUVR while storing a quarter of the
-              bits.</li>
-          </ul>
+        <h2 class="title is-3 has-text-centered">Contributions</h2>
+        <div class="content has-text-justified">
+          <p>
+            We benchmark three representative amortized-INR methods (TransINR,
+            Functa, and HUVR) on 1&nbsp;m/pixel bare-earth terrain under a
+            unified protocol, reproducing each from its published
+            implementation. Replacing HUVR's piecewise-linear ReLU coordinate
+            decoder with a modulated SIREN raises PSNR by +2.83&nbsp;dB
+            (51.69 vs. 48.86&nbsp;dB) and reduces height error by 28% at an
+            unchanged 8,224-float per-tile payload. That payload tolerates int8
+            post-training quantization at a cost of 0.15&nbsp;dB, so the
+            quantized configuration still reconstructs more faithfully than
+            HUVR at full precision while storing a quarter of the bits.
+          </p>
         </div>
       </div>
     </div>
@@ -151,43 +149,42 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Method</h2>
         <div class="content has-text-justified">
-          <h3 class="title is-5">Amortized neural representations</h3>
+          <h3 class="title is-5">Amortized INRs</h3>
           <p>
             An INR encodes elevation as a coordinate network mapping each
-            spatial coordinate to a height. Per-instance fitting optimizes a
-            separate network for every tile, which is accurate but slow.
-            Amortized methods instead share a pipeline across the dataset:
-            each tile is mapped &mdash; typically, but not always, by a
-            hypernetwork &mdash; to a per-tile <em>bottleneck token</em>, and a
-            shared coordinate decoder is queried at each coordinate
-            conditioned on that token. The token is the only per-tile object
-            stored, so its dimensionality sets the per-tile storage budget. The
-            three benchmarked methods instantiate this differently &mdash;
-            TransINR predicts a full ReLU MLP's weights in one forward pass;
-            Functa has no hypernetwork, conditioning a shared SIREN on a 512-d
-            global modulation vector that is instead recovered at inference by
-            a short meta-learned inner loop; and HUVR factors the
-            hypernetwork around a low-dimensional patch-token bottleneck
-            (256 patches at width 32, plus one global token = 8,224 floats).
+            spatial coordinate to the corresponding height. Per-instance
+            fitting optimizes a separate network for every tile, which is
+            accurate but slow. Amortized methods share a pipeline across the
+            dataset instead. Each tile is mapped, typically but not always by a
+            hypernetwork, to a per-tile <em>bottleneck token</em>, and a shared
+            coordinate decoder is queried at each coordinate conditioned on
+            that token. The token is the only per-tile object stored, so its
+            dimensionality sets the per-tile storage budget. The three
+            benchmarked methods instantiate this differently. TransINR predicts
+            the full weights of a ReLU MLP in one forward pass. Functa has no
+            hypernetwork: a 512-dimensional global modulation vector conditions
+            a shared SIREN, and is recovered at inference by a short
+            meta-learned inner loop. HUVR factors the hypernetwork around a
+            low-dimensional patch-token bottleneck, with 256 patches at width
+            32, plus one global token, giving a per-tile token of 8,224 floats.
           </p>
           <h3 class="title is-5">HUVR+SIREN: a domain-adapted decoder</h3>
           <p>
             We treat a terrain heightfield as a smooth surface, whose
-            downstream interpretation &mdash; slope, curvature, hydrology
-            &mdash; relies on continuous gradients and Laplacians. HUVR's ReLU
-            coordinate decoder is piecewise-linear, with derivatives that are
-            discontinuous at activation breakpoints: a poor match for that
-            data. We replace it with a SIREN, whose sinusoidal activations are
-            infinitely differentiable, conditioned on the patch token through
-            ModulatedSIREN's per-layer amplitude modulation, which we extend
-            with an additive phase shift inside the sinusoid. The decoder is a
-            4-layer SIREN of width 256 with
-            &omega;<sub>0</sub>&nbsp;=&nbsp;10, evaluated directly at each pixel
-            coordinate, which removes HUVR's convolutional upsampler. The
-            modification is deliberately restricted: the encoder, hypernetwork
-            decoder, bottleneck structure, and training protocol are held fixed,
-            so the comparison isolates how the coordinate-decoder design
-            transfers from natural images to terrain.
+            downstream interpretation relies on continuous gradients and
+            Laplacians. HUVR's ReLU coordinate decoder is piecewise-linear,
+            with derivatives that are discontinuous at activation breakpoints,
+            a poor match for such a surface. We therefore replace it with a
+            SIREN, whose sinusoidal activations are infinitely differentiable,
+            and condition it on the patch token through ModulatedSIREN's
+            per-layer amplitude modulation, which we extend with an additive
+            phase shift inside the sinusoid. The decoder is a 4-layer SIREN of
+            width 256 with &omega;<sub>0</sub>&nbsp;=&nbsp;10, evaluated
+            directly at each pixel coordinate, which removes HUVR's
+            convolutional upsampler. The restricted modification is deliberate:
+            holding the encoder, hypernetwork decoder, bottleneck structure,
+            and training protocol fixed isolates how the coordinate-decoder
+            design transfers from natural images to terrain.
           </p>
           <h3 class="title is-5">Benchmark protocol</h3>
           <p>
@@ -247,10 +244,10 @@
             height fidelity, the lowest derivative errors, and a per-tile
             representation an order of magnitude smaller than TransINR's,
             outperforming the reproduced TransINR and Functa configurations by
-            7.3 and 13.9&nbsp;dB. HUVR+SIREN improves every reported fidelity
-            metric at unchanged per-tile storage: a <b>+2.83&nbsp;dB</b> gain
-            and a 28% height-error reduction at the same 8,224-float payload,
-            with gradient RMSE reduced by 23% and Laplacian RMSE by 17%.
+            7.3 and 13.9&nbsp;dB. HUVR+SIREN improves all reported fidelity
+            metrics at unchanged per-tile storage: a +2.83&nbsp;dB gain and a
+            28% height-error reduction at the same 8,224-float payload, with
+            gradient RMSE reduced by 23% and Laplacian RMSE by 17%.
           </p>
         </div>
       </div>
@@ -274,16 +271,15 @@
             truth, HUVR, and HUVR+SIREN.
           </p>
           <p>
-            Terrain is interpreted through its derivatives: downstream
-            geospatial analyses, from slope and curvature estimation to
-            hydrological modeling, rely on continuous gradients and Laplacians
-            rather than on elevation values alone. SIREN's activations are
-            infinitely differentiable, so for the SIREN-based decoders these
-            derivatives are computed analytically by automatic differentiation
-            rather than by finite differences of a decoded raster, whereas
-            HUVR's ReLU coordinate decoder is piecewise-linear, with
-            derivatives that are discontinuous at its activation breakpoints.
-            The figure above illustrates the effect qualitatively. The
+            Downstream geospatial analyses, from slope and curvature estimation
+            to hydrological modeling, rely on continuous gradients and
+            Laplacians rather than on elevation values alone. Derivative
+            fidelity is measured against central finite-difference references
+            from the ground-truth tile, computed analytically by automatic
+            differentiation for the SIREN-based decoders and by finite
+            differences of the decoded heightfield for the ReLU-based decoders.
+            HUVR+SIREN reconstructs the gradient and Laplacian fields more
+            faithfully than HUVR, as the figure above illustrates. The
             improvement also holds for the worst-case tiles, whose maximum
             gradient and Laplacian errors drop by 20% and 19%.
           </p>
@@ -308,10 +304,10 @@
             entropy models; the dashed curve is fixed-width.
           </p>
           <p>
-            The per-tile payload tolerates aggressive post-training
-            quantization. Quantizing the bottleneck token to int8 with
-            symmetric per-dimension min&ndash;max scales costs only
-            <b>0.15&nbsp;dB</b> (51.54&nbsp;dB at 1.012&nbsp;BPP fixed-width),
+            The per-tile payload also tolerates post-training quantization.
+            Quantizing the bottleneck token to int8 with symmetric
+            per-dimension min&ndash;max scales costs only
+            0.15&nbsp;dB (51.54&nbsp;dB at 1.012&nbsp;BPP fixed-width),
             so the int8 configuration still reconstructs more faithfully than
             HUVR at full precision while storing a quarter of the bits. Below
             int8, reconstruction quality degrades sharply. Removing the
@@ -331,7 +327,7 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3 has-text-centered">Where the gap remains</h2>
+        <h2 class="title is-3 has-text-centered">Diagnosis of the amortization gap</h2>
         <img src="./static/images/amortization_gap.png" width="1532" height="1197" alt="Line plot of HUVR+SIREN PSNR at three progressively more flexible per-tile configurations, with horizontal baselines for the other reproduced methods.">
         <div class="content has-text-justified">
           <p class="is-size-7">
@@ -341,28 +337,29 @@
             the amortized cross-method benchmark.
           </p>
           <p>
-            Per-instance fitting reaches higher per-tile quality than amortized
-            inference, and we call the difference the <em>amortization gap</em>.
-            Two diagnostics locate it. Freezing the shared model and continuing
-            to optimize only the bottleneck token per tile reaches
-            53.05&nbsp;dB &mdash; just +1.36&nbsp;dB over amortized inference,
-            so the encoder already produces tokens close to the best 32-d token
-            the shared decoder can use. Additionally letting the hypernetwork
-            decoder and SIREN base weights specialize per tile (which destroys
-            amortization, so it is a structural ceiling rather than an inference
-            recipe) reaches 58.95&nbsp;dB, more than 7&nbsp;dB above the
-            amortized 51.69&nbsp;dB. A PCA of all patch tokens agrees: five of
-            the 32 dimensions carry 95% of the variance. Within the tested
-            dataset scale and configuration, the gap lives in the <b>shared
-            post-bottleneck pipeline</b>, not in the per-tile token &mdash;
-            narrowing it needs a more expressive shared pipeline, not a wider
-            token.
+            Per-instance fitting generally reaches higher per-tile quality than
+            amortized inference, and we call the difference the
+            <em>amortization gap</em>. Two diagnostics locate it. Freezing the
+            shared model and continuing to optimize only the bottleneck token
+            per tile reaches 53.05&nbsp;dB, only +1.36&nbsp;dB over amortized
+            inference, so the encoder already produces tokens close to the best
+            32-dimensional token the shared decoder can use. Additionally
+            letting the hypernetwork decoder and SIREN base weights specialize
+            per tile, which destroys amortization and so is a structural ceiling
+            rather than an inference recipe, reaches 58.95&nbsp;dB, more than
+            7&nbsp;dB above the amortized 51.69&nbsp;dB. A PCA of all patch
+            tokens is consistent with this observation: five of the 32
+            dimensions carry 95% of the variance. Within the tested dataset
+            scale and configuration, the amortization gap thus resides in the
+            shared post-bottleneck pipeline rather than in the per-tile token,
+            and narrowing it requires a more expressive shared pipeline rather
+            than a wider token.
           </p>
           <p>
-            <b>What this does not cover.</b> The findings characterize a single
-            geographic source at a single ground sampling distance, and a direct
-            rate&ndash;distortion comparison against production DEM codecs such
-            as LERC and ZFP remains open.
+            The findings characterize a single geographic source at a single
+            ground sampling distance, and a direct rate&ndash;distortion
+            comparison against production DEM codecs such as LERC and ZFP
+            remains open.
           </p>
         </div>
       </div>
