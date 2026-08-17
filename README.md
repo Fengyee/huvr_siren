@@ -37,4 +37,14 @@ post-training quantization of the stored token.
 
 ## License
 
-MIT (see `LICENSE`).
+Three different terms apply to the contents of this repository:
+
+- **Site code** (`index.html`, `static/css/index.css`): MIT, see `LICENSE`.
+- **Page template**: adapted from the
+  [Nerfies project page](https://github.com/nerfies/nerfies.github.io),
+  released under
+  [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/).
+- **Paper PDF and figures** (`static/huvr_siren_sigspatial2026.pdf`,
+  `static/images/*`): © 2026 the authors; publication rights licensed to ACM.
+  Not covered by the MIT license above — reuse is governed by the ACM
+  copyright notice on the first page of the paper.

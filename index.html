@@ -15,7 +15,7 @@
   <meta property="og:image" content="https://fengyee.github.io/huvr_siren/static/images/og_banner.png">
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232b59c3'%3E%3Cpath d='M6 2h9l5 5v15a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1zm8 1.5V8h4.5L14 3.5zM8 12h8v1.4H8V12zm0 3h8v1.4H8V15zm0 3h5v1.4H8V18z'/%3E%3C/svg%3E">
-  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans" rel="stylesheet">
 
   <link rel="stylesheet" href="static/css/bulma.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
@@ -64,7 +64,7 @@
             <span class="link-block">
               <a href="https://github.com/Fengyee/huvr_siren" target="_blank" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="fab fa-github"></i></span>
-                <span>Code</span>
+                <span>Code (soon)</span>
               </a>
             </span>
           </div>
@@ -78,11 +78,14 @@
 <section class="hero teaser" id="teaser">
   <div class="container is-max-desktop">
     <div class="hero-body">
-      <img src="./static/images/teaser.png" alt="Amortized neural representation of a terrain heightfield: a shared model maps each tile to a compact per-tile token, and a shared coordinate decoder reconstructs the elevation surface.">
+      <img src="./static/images/teaser.png" width="2400" height="943" alt="Pipeline diagram placing the four methods side by side. At the left, a DEM tile is patchified into a grid of patches. Two routes turn those patches into per-tile parameters: a meta-learner block whose per-tile latent code is optimized at test time (Functa, shift modulation), and a hypernetwork encoder and decoder around a row of bottleneck tokens (HUVR+SIREN, amplitude-plus-shift modulation; HUVR, Hadamard modulation; TransINR, weight prediction). Colored arrows route each method into one of two coordinate decoders that map an x and y coordinate to an elevation z: a SIREN decoder for Functa and HUVR+SIREN, a ReLU-MLP decoder for HUVR and TransINR. At the right, patch-wise paths pass through a patch-stitching or an upsample-and-pixelshuffle block before the reconstructed tile; full-domain paths reach it directly. A legend along the bottom keys the token colors, the test-time-optimized and shared-weight boxes, and the full-domain versus patch reconstruction arrows.">
       <h2 class="subtitle has-text-centered">
         Amortized neural representations encode each terrain tile as a compact
         per-tile token that a shared coordinate decoder turns back into a
-        continuous elevation surface.
+        continuous elevation surface. The diagram contrasts the four methods
+        compared here &mdash; TransINR, Functa, HUVR, and HUVR+SIREN &mdash;
+        which differ in how that token is produced and how it modulates the
+        decoder.
       </h2>
     </div>
   </div>
@@ -271,7 +274,7 @@
     <div class="columns is-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Derivative fidelity</h2>
-        <img src="./static/images/gradient_fidelity.png" alt="Three terrain tiles (flat, hilly, mountainous), each shown as elevation, gradient magnitude, and Laplacian, for ground truth, HUVR, and HUVR+SIREN.">
+        <img src="./static/images/gradient_fidelity.png" width="1620" height="624" alt="Three terrain tiles (flat, hilly, mountainous), each shown as elevation, gradient magnitude, and Laplacian, for ground truth, HUVR, and HUVR+SIREN.">
         <div class="content has-text-justified">
           <p class="is-size-7">
             Reconstruction of three tiles at the 10%, 50%, and 90% quantiles of
@@ -305,8 +308,8 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-four-fifths">
-        <h2 class="title is-3 has-text-centered">Storage cost</h2>
-        <img src="./static/images/rate_distortion.png" alt="Rate-distortion scatter plot of PSNR against bits per pixel, showing the HUVR+SIREN post-training-quantization frontier dominating full-precision HUVR down to int8.">
+        <h2 class="title is-3 has-text-centered">Storage and decode cost</h2>
+        <img src="./static/images/rate_distortion.png" width="1648" height="1141" alt="Rate-distortion scatter plot of PSNR against bits per pixel, showing the HUVR+SIREN post-training-quantization frontier dominating full-precision HUVR down to int8.">
         <div class="content has-text-justified">
           <p class="is-size-7">
             Rate&ndash;distortion frontier on the test split under
@@ -339,7 +342,7 @@
     <div class="columns is-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3 has-text-centered">Where the gap remains</h2>
-        <img src="./static/images/amortization_gap.png" alt="Line plot of HUVR+SIREN PSNR at three progressively more flexible per-tile configurations, with horizontal baselines for the other reproduced methods.">
+        <img src="./static/images/amortization_gap.png" width="1532" height="1197" alt="Line plot of HUVR+SIREN PSNR at three progressively more flexible per-tile configurations, with horizontal baselines for the other reproduced methods.">
         <div class="content has-text-justified">
           <p class="is-size-7">
             Decomposing the amortization gap of HUVR+SIREN. PSNR as per-tile
@@ -382,12 +385,13 @@
   <div class="container is-max-desktop">
     <div class="columns is-centered">
       <div class="column is-four-fifths">
+        <h2 class="title is-3 has-text-centered">Ablations</h2>
         <div class="content has-text-centered">
           <p>
             One-at-a-time ablations on patch size, bottleneck width, SIREN base
             frequency, modulation interface, and training-set size are reported
             in the
-            <a href="./static/huvr_siren_sigspatial2026.pdf">paper</a>.
+            <a href="./static/huvr_siren_sigspatial2026.pdf" target="_blank">paper</a>.
           </p>
         </div>
       </div>
@@ -421,7 +425,7 @@
             This page uses the
             <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a> project
             page template, released under a
-            <a href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
             license.
           </p>
         </div>
