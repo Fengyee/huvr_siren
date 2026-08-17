@@ -56,19 +56,19 @@
 
           <div class="publication-links">
             <span class="link-block">
-              <a href="https://arxiv.org/abs/2606.00404" class="external-link button is-normal is-rounded is-dark">
+              <a href="https://arxiv.org/abs/2606.00404" target="_blank" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="ai ai-arxiv"></i></span>
                 <span>arXiv</span>
               </a>
             </span>
             <span class="link-block">
-              <a href="./static/huvr_siren_sigspatial2026.pdf" class="external-link button is-normal is-rounded is-dark">
+              <a href="./static/huvr_siren_sigspatial2026.pdf" target="_blank" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="fas fa-file-pdf"></i></span>
                 <span>Paper</span>
               </a>
             </span>
             <span class="link-block">
-              <a href="https://github.com/Fengyee/huvr_siren" class="external-link button is-normal is-rounded is-dark">
+              <a href="https://github.com/Fengyee/huvr_siren" target="_blank" class="external-link button is-normal is-rounded is-dark">
                 <span class="icon"><i class="fab fa-github"></i></span>
                 <span>Code</span>
               </a>
@@ -169,29 +169,31 @@
             An INR encodes elevation as a coordinate network mapping each
             spatial coordinate to a height. Per-instance fitting optimizes a
             separate network for every tile, which is accurate but slow.
-            Amortized methods instead share a pipeline across the dataset: a
-            hypernetwork maps a tile to a per-tile <em>bottleneck token</em>,
-            and a shared coordinate decoder is queried at each coordinate
+            Amortized methods instead share a pipeline across the dataset:
+            each tile is mapped &mdash; typically, but not always, by a
+            hypernetwork &mdash; to a per-tile <em>bottleneck token</em>, and a
+            shared coordinate decoder is queried at each coordinate
             conditioned on that token. The token is the only per-tile object
             stored, so its dimensionality sets the per-tile storage budget. The
             three benchmarked methods instantiate this differently &mdash;
-            TransINR predicts a full ReLU MLP's weights in one forward pass,
-            Functa conditions a shared SIREN on a 512-d global modulation
-            vector recovered by a meta-learned inner loop, and HUVR factors the
+            TransINR predicts a full ReLU MLP's weights in one forward pass;
+            Functa has no hypernetwork, conditioning a shared SIREN on a 512-d
+            global modulation vector that is instead recovered at inference by
+            a short meta-learned inner loop; and HUVR factors the
             hypernetwork around a low-dimensional patch-token bottleneck
             (256 patches at width 32, plus one global token = 8,224 floats).
           </p>
           <h3 class="title is-5">HUVR+SIREN: a domain-adapted decoder</h3>
           <p>
-            A terrain heightfield is a smooth surface, and its downstream
-            interpretation &mdash; slope, curvature, hydrology &mdash; depends
-            on continuous gradients and Laplacians. HUVR's ReLU coordinate
-            decoder is piecewise-linear, with derivatives that are discontinuous
-            at activation breakpoints: a poor match for that data. We replace it
-            with a SIREN, whose sinusoidal activations are infinitely
-            differentiable, conditioned on the patch token through per-layer
-            amplitude modulation extended with an additive phase shift inside
-            the sinusoid. The decoder is a 4-layer SIREN of width 256 with
+            We treat a terrain heightfield as a smooth surface, whose
+            downstream interpretation &mdash; slope, curvature, hydrology
+            &mdash; relies on continuous gradients and Laplacians. HUVR's ReLU
+            coordinate decoder is piecewise-linear, with derivatives that are
+            discontinuous at activation breakpoints: a poor match for that
+            data. We replace it with a SIREN, whose sinusoidal activations are
+            infinitely differentiable, conditioned on the patch token through
+            ModulatedSIREN's per-layer amplitude modulation, which we extend
+            with an additive phase shift inside the sinusoid. The decoder is a 4-layer SIREN of width 256 with
             &omega;<sub>0</sub>&nbsp;=&nbsp;10, evaluated directly at each pixel
             coordinate, which removes HUVR's convolutional upsampler. The
             modification is deliberately restricted: the encoder, hypernetwork
