@@ -174,7 +174,8 @@
             hypernetwork around a low-dimensional patch-token bottleneck (256
             patches at width 32, plus one global token, giving a per-tile token
             of 8,224 floats); its transformer decoder turns that token into
-            per-patch modulations of a shared ReLU MLP, whose per-patch outputs
+            per-patch modulations of a shared 3-layer ReLU MLP, whose per-patch
+            outputs
             are stitched and refined by a Conv+PixelShuffle upsampler.
           </p>
           <h3 class="title is-5">HUVR+SIREN: a domain-adapted decoder</h3>
@@ -384,7 +385,7 @@
             size, bottleneck width, SIREN base frequency, modulation interface,
             and training-set size. Patch granularity has the largest remaining
             effect on the quality-storage tradeoff: halving the patch size
-            gains +4.90&nbsp;dB, at four times the payload. Widening the
+            gains +4.90&nbsp;dB, at 4&times; the payload. Widening the
             bottleneck gives rapidly diminishing returns, with the unprojected
             D&nbsp;=&nbsp;768 setting recovering only +2.22&nbsp;dB, so the
             per-tile token is already near its useful limit. The full ablation
