@@ -6,6 +6,11 @@ ACM SIGSPATIAL 2026
 
 [**Project page**](https://fengyee.github.io/huvr_siren/) · [**Paper (arXiv)**](https://arxiv.org/abs/2606.00404)
 
+![Pipeline diagram comparing TransINR, Functa, HUVR and HUVR+SIREN. A DEM tile is patchified, then routed either through a meta-learner whose per-tile latent is optimized at test time or through a hypernetwork encoder and decoder around a row of bottleneck tokens. Colored arrows carry each method into either a SIREN or a ReLU-MLP coordinate decoder mapping x and y to elevation, and patch-wise paths pass through patch stitching or pixelshuffle upsampling before the reconstructed tile.](static/images/teaser.png)
+
+The four benchmarked methods differ in how the per-tile token is produced and
+how it modulates the coordinate decoder.
+
 ## TL;DR
 
 Amortized neural representations encode each terrain tile as a compact per-tile
