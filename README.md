@@ -19,7 +19,9 @@ post-training quantization of the stored token.
 
 ## Code
 
-**Code release coming soon.**
+Training code for both models is in [`code/`](code/) — see
+[`code/README.md`](code/README.md) for install, a data-free smoke test, the
+shard format, and the config tables.
 
 ## Citation
 
@@ -40,6 +42,10 @@ post-training quantization of the stored token.
 Three different terms apply to the contents of this repository:
 
 - **Site code** (`index.html`, `static/css/index.css`): MIT, see `LICENSE`.
+- **Training code** (`code/`): MIT, with portions derived from
+  [trans-inr](https://github.com/yinboc/trans-inr) (BSD 3-Clause) and
+  [HUVR](https://github.com/tiktok/huvr) (MIT), as marked in the file headers.
+  See [`code/README.md`](code/README.md#license).
 - **Page template**: adapted from the
   [Nerfies project page](https://github.com/nerfies/nerfies.github.io),
   released under

@@ -1,0 +1,42 @@
+# HUVR+SIREN ablation (Table 2): bottleneck width D=16.
+# Differs from ../huvr_siren.yaml only in the named axis.
+
+tokenizer:
+  input_size: 256
+  patch_size: 16
+hypo_siren:
+  in_dim: 2
+  out_dim: 1
+  hidden_dim: '256_256_256'
+  depth: 4
+  omega_0: 10.0
+transformer_encoder:
+  name: vitb_16_norm_only_rope_fixed
+  dim: 768
+  use_registers: false
+transformer_decoder:
+  attention: false
+  dim: 1024
+  depth: 4
+  n_head: 16
+  head_dim: 64
+  ff_dim: 4096
+embedding_dim: 16
+input_channels: 1
+input_proj_mode: learned_1x1
+siren_modulation: both
+batch_size: 8
+num_workers: 2
+lr: 0.0005
+clip: 1.0
+max_epochs: 200
+warmup_epochs: 5
+weight_decay: 0.01
+opt_eps: 1.0e-08
+ckpt_freq: 20
+vis_freq: 20
+terrain_data_dir: /path/to/terrain_shards
+terrain_num_train: 3338
+terrain_num_val: 420
+terrain_augment: true
+dataset_name: terrain

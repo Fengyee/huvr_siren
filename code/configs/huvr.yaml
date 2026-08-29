@@ -1,0 +1,53 @@
+# HUVR as published, ported to single-channel terrain heightfields.
+# Reproduces the HUVR row of Table 1.
+
+tokenizer:
+  input_size: 256
+  patch_size: 16
+hyponet:
+  in_dim: 2
+  hidden_dim: '256_256'
+  out_dim: 256
+  out_bias: 0.0
+  force_act: true
+  depth: 3
+  use_pe: true
+  pe_dim: 64
+  strides: '1_1_1'
+hypocnn:
+  in_dim: 256
+  hid_dim: 256
+  out_dim: 3
+  out_bias: 0.0
+  strds: '4'
+  ks: '3'
+mod_idxs: '1'
+transformer_encoder:
+  name: vitb_16_norm_only_rope_fixed
+  dim: 768
+  use_registers: false
+transformer_decoder:
+  attention: false
+  dim: 1024
+  depth: 4
+  n_head: 16
+  head_dim: 64
+  ff_dim: 4096
+embedding_dim: 32
+use_hypocnn: true
+use_global_token: true
+batch_size: 8
+num_workers: 2
+lr: 0.0005
+clip: 1.0
+max_epochs: 200
+warmup_epochs: 5
+weight_decay: 0.01
+opt_eps: 1.0e-08
+ckpt_freq: 20
+vis_freq: 20
+terrain_data_dir: /path/to/terrain_shards
+terrain_num_train: 3338
+terrain_num_val: 420
+terrain_augment: true
+dataset_name: terrain
