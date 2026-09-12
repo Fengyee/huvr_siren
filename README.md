@@ -28,6 +28,15 @@ Training code for both models is in [`code/`](code/) — see
 [`code/README.md`](code/README.md) for install, a data-free smoke test, the
 shard format, and the config tables.
 
+## Related projects
+
+- [**ImplicitTerrainV2**](https://fengyee.github.io/implicitterrainv2/) (ACM SIGSPATIAL 2026) · [code](https://github.com/Fengyee/implicitterrainv2)
+  — the companion paper on swisstopo terrain, from the per-instance side: a
+  cascaded SIREN fitted to each tile, with spatially adaptive frequency
+  gating and weight compression.
+- [**ImplicitTerrain**](https://fengyee.github.io/implicit-terrain/) (CVPR 2024 Workshop INRV) · [code](https://github.com/Fengyee/implicit-terrain)
+  — the earlier per-tile INR for continuous terrain modeling and analysis.
+
 ## Citation
 
 ```bibtex
